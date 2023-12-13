@@ -15,21 +15,20 @@ export const App = () => {
 
   useEffect(() => {
     const fetchImages = async () => {
-      if (!query) {
-        return alert('Enter query, please');
-      }
+      // if (!query) {
+      //   return alert('Enter query, please');
+      // }
       setIsLoading(true);
       setError(false);
 
       try {
         const { hits, total } = await getImages(query, page);
-        // console.log('hits.length', hits.length);
+
         if (hits.length === 0) {
           setIsEmpty(true);
         }
         setImages(prevImages => [...prevImages, ...hits]);
         setIsVisible(page < Math.ceil(total / perPage));
-        // console.log('Math.ceil', Math.ceil(total / perPage));
       } catch (error) {
         setError(true);
       } finally {
@@ -49,7 +48,7 @@ export const App = () => {
   };
 
   const onLoadMore = () => {
-    setPage(prevPage => (page = prevPage + 1));
+    setPage(prevPage => prevPage + 1);
   };
 
   return (
