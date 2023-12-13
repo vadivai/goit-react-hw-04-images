@@ -1,82 +1,68 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import { Searchbar, ImageGallery, Button, Loader } from 'components';
 // import css from './App.module.css';
 import { getImages, perPage } from 'components/service/api';
 import { AppStyled } from './App.styled';
 import toast, { Toaster } from 'react-hot-toast';
 
-export class App extends Component {
-  state = {
-    query: '',
-    images: [],
-    page: 1,
-    isLoading: false,
-    isVisible: false,
-    isEmpty: false,
-    error: false,
-  };
+export const App = () => {
+  const [query, setQuery] = useState('');
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [error, setError] = useState(false);
 
-  componentDidUpdate(prevProps, prevState) {
-    const { query, page } = this.state;
-    if (prevState.query !== query || prevState.page !== page) {
-      this.fetchImages();
-    }
-  }
+  useEffect(() => {
+    setImages(prevImages => [...prevImages, fetchImages()]);
+  }, [query, page]);
 
-  fetchImages = async () => {
-    const { query, page } = this.state;
+  const fetchImages = async () => {
     // if (!query) {
     //   return alert('Enter query, please');
     // }
-    this.setState({ isLoading: true, error: false });
+    setIsLoading(true);
+    setError(false);
 
     try {
       const { hits, total } = await getImages(query, page);
       // console.log('hits.length', hits.length);
       if (hits.length === 0) {
-        this.setState({ isEmpty: true });
+        setIsEmpty(true);
       }
-      this.setState(prevState => ({
-        images: [...prevState.images, ...hits],
-        isVisible: page < Math.ceil(total / perPage),
-      }));
+      setImages(prevImages => [...prevImages, ...hits]);
+      setIsVisible(page < Math.ceil(total / perPage));
       // console.log('Math.ceil', Math.ceil(total / perPage));
     } catch (error) {
-      this.setState({ error: true });
+      setError(true);
     } finally {
-      this.setState({ isLoading: false });
+      setIsLoading(false);
     }
   };
 
-  onSubmitQuery = query => {
-    this.setState({
-      query,
-      images: [],
-      page: 1,
-      isEmpty: false,
-      isVisible: false,
-
-      //еще добавить что-то?
-    });
+  const onSubmitQuery = query => {
+    setQuery(query);
+    setImages([]);
+    setPage(1);
+    setIsEmpty(false);
+    setIsVisible(false);
   };
 
-  onLoadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+  const onLoadMore = () => {
+    setPage(prevPage => (page = prevPage + 1));
   };
 
-  render() {
-    const { query, images, isLoading, isVisible, isEmpty, error } = this.state;
-    return (
-      <AppStyled>
-        <Searchbar stateQuery={query} onSubmitQuery={this.onSubmitQuery} />
-        {isLoading && <Loader />}
-        {error && toast.error('Sorry, something went wrong...')}
-        {isEmpty &&
-          toast.error('There are no images. Please, change your query!')}
-        {images.length > 0 && <ImageGallery images={images} />}
-        {isVisible && <Button onClick={this.onLoadMore}>Load more</Button>}
-        <Toaster />
-      </AppStyled>
-    );
-  }
-}
+  return (
+    <AppStyled>
+      <Searchbar stateQuery={query} onSubmitQuery={onSubmitQuery} />
+      {isLoading && <Loader />}
+      {error && toast.error('Sorry, something went wrong...')}
+      {isEmpty &&
+        toast.error('There are no images. Please, change your query!')}
+      {images.length > 0 && <ImageGallery images={images} />}
+      {isVisible && <Button onClick={onLoadMore}>Load more</Button>}
+      <Toaster />
+    </AppStyled>
+  );
+};
