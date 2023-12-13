@@ -15,9 +15,9 @@ export const App = () => {
 
   useEffect(() => {
     const fetchImages = async () => {
-      // if (!query) {
-      //   return alert('Enter query, please');
-      // }
+      if (!query) {
+        return alert('Enter query, please');
+      }
       setIsLoading(true);
       setError(false);
 
