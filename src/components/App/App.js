@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Searchbar, ImageGallery, Button, Loader } from 'components';
-// import css from './App.module.css';
 import { getImages, perPage } from 'components/service/api';
 import { AppStyled } from './App.styled';
 import toast, { Toaster } from 'react-hot-toast';
@@ -15,31 +14,31 @@ export const App = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    setImages(prevImages => [...prevImages, fetchImages()]);
-  }, [query, page]);
-
-  const fetchImages = async () => {
-    // if (!query) {
-    //   return alert('Enter query, please');
-    // }
-    setIsLoading(true);
-    setError(false);
-
-    try {
-      const { hits, total } = await getImages(query, page);
-      // console.log('hits.length', hits.length);
-      if (hits.length === 0) {
-        setIsEmpty(true);
+    const fetchImages = async () => {
+      if (!query) {
+        return alert('Enter query, please');
       }
-      setImages(prevImages => [...prevImages, ...hits]);
-      setIsVisible(page < Math.ceil(total / perPage));
-      // console.log('Math.ceil', Math.ceil(total / perPage));
-    } catch (error) {
-      setError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setIsLoading(true);
+      setError(false);
+
+      try {
+        const { hits, total } = await getImages(query, page);
+        // console.log('hits.length', hits.length);
+        if (hits.length === 0) {
+          setIsEmpty(true);
+        }
+        setImages(prevImages => [...prevImages, ...hits]);
+        setIsVisible(page < Math.ceil(total / perPage));
+        // console.log('Math.ceil', Math.ceil(total / perPage));
+      } catch (error) {
+        setError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, [query, page]);
 
   const onSubmitQuery = query => {
     setQuery(query);
