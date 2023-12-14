@@ -15,26 +15,10 @@ const customStyles = {
     zIndex: 1200,
   },
 
-  // content: {
-  //   top: '50%',
-  //   left: '50%',
-  //   right: 'auto',
-  //   bottom: 'auto',
-  //   marginRight: '-50%',
-  //   transform: 'translate(-50%, -50%)',
-  // },
 };
 
 export const Modal = ({ isOpen, onClose, srcLarge, alt }) => {
   return (
-    //  <ReactModal
-    //     isOpen={isOpen}
-    //     onRequestClose={onClose}
-    //     style={customStyles}
-    //     contentLabel="Large Image"
-    //   >
-    //     <img src={srcLarge} alt={alt} />
-    //   </ReactModal>
 
     <ModalStyled
       isOpen={isOpen}

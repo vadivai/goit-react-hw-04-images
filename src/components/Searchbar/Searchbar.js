@@ -1,4 +1,3 @@
-// import css from './Searchbar.module.css';
 import {
   SearchButtonStyled,
   SearchFormStyled,
